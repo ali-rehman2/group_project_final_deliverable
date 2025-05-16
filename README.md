@@ -9,4 +9,4 @@ The application is designed to be fully responsive and accessible across modern 
 - Android (Chrome, Firefox)
 - Desktop Browsers (Chrome, Firefox, Safari, Microsoft Edge)
 
-Link to Developer Manual: 
+Link to Developer Manual: https://github.com/ali-rehman2/group_project_final_deliverable/blob/main/Developer_Manual.md
