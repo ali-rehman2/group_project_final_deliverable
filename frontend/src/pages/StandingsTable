@@ -1,0 +1,188 @@
+import { useEffect, useState } from 'react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import { motion } from 'framer-motion';
+
+// Register Chart.js components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+type League = {
+  id: string;
+  name: string;
+};
+
+type Team = {
+  id: string;
+  name: string;
+  logo: string;
+};
+
+type Standing = {
+  team: {
+    id: string;
+    name: string;
+  };
+  points: number;
+};
+
+export default function StandingsTable() {
+  const [leagues, setLeagues] = useState<League[]>([]);
+  const [selectedLeague, setSelectedLeague] = useState('');
+  const [standings, setStandings] = useState<Standing[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+
+  // Fetch leagues
+  useEffect(() => {
+    fetch('/api/leagues')
+      .then(res => res.json())
+      .then(data => setLeagues(data));
+  }, []);
+
+  // Fetch standings and teams when league is selected
+  useEffect(() => {
+    if (selectedLeague) {
+      fetch(`/api/standings?league=${selectedLeague}`)
+        .then(res => res.json())
+        .then(data => setStandings(data));
+
+      fetch(`/api/teams/${selectedLeague}`)
+        .then(res => res.json())
+        .then(data => setTeams(data));
+    }
+  }, [selectedLeague]);
+
+  // Prepare Chart.js data for top 5 teams
+  const topStandings = standings.slice(0, 5);
+
+  const chartData = {
+    labels: topStandings.map((team) => team.team.name),
+    datasets: [
+      {
+        label: 'Points',
+        data: topStandings.map((team) => team.points),
+        backgroundColor: 'rgba(34, 197, 94, 0.6)', // Tailwind green-500 with opacity
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'Top 5 Teams by Points',
+      },
+    },
+  };
+
+  return (
+    <motion.div
+      className="p-6 max-w-6xl mx-auto"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+    >
+      <h1 className="text-3xl font-bold mb-4 text-center">View League Standings</h1>
+
+      {/* Dropdown */}
+      <select
+        className="w-full md:w-1/3 p-2 border rounded mb-6"
+        value={selectedLeague}
+        onChange={(e) => setSelectedLeague(e.target.value)}
+      >
+        <option value="">Select a League</option>
+        {leagues.map((league) => (
+          <option key={league.id} value={league.id}>
+            {league.name}
+          </option>
+        ))}
+      </select>
+
+      {/* Standings Table */}
+      {standings.length > 0 && (
+        <motion.div
+          className="overflow-x-auto"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="text-2xl font-semibold mt-6 mb-2">League Standings</h2>
+          <table className="min-w-full border border-gray-300">
+            <thead>
+              <tr className="bg-gray-100 text-left">
+                <th className="p-2 border">Team</th>
+                <th className="p-2 border">Points</th>
+              </tr>
+            </thead>
+            <tbody>
+              {standings.map((team) => (
+                <tr key={team.team.id}>
+                  <td className="p-2 border">{team.team.name}</td>
+                  <td className="p-2 border">{team.points}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </motion.div>
+      )}
+
+      {/* Chart */}
+      {standings.length > 0 && (
+        <motion.div
+          className="mt-10 bg-white p-4 rounded shadow"
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <h2 className="text-xl font-semibold mb-2">Standings Chart</h2>
+          <Bar data={chartData} options={chartOptions} />
+        </motion.div>
+      )}
+
+      {/* Teams Grid */}
+      {teams.length > 0 && (
+        <motion.div
+          className="mt-10"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          <h2 className="text-2xl font-semibold mb-4">Teams in League</h2>
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+          >
+            {teams.map((team) => (
+              <motion.div
+                key={team.id}
+                className="bg-white border rounded-lg p-4 shadow hover:shadow-md transition"
+                whileHover={{ scale: 1.05 }}
+              >
+                <img
+                  src={team.logo || '/default-logo.png'}
+                  alt={team.name}
+                  className="h-12 w-12 mx-auto object-contain mb-2"
+                />
+                <h3 className="text-center font-medium">{team.name}</h3>
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+      )}
+    </motion.div>
+  );
+}

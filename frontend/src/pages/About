@@ -1,0 +1,40 @@
+import { motion } from 'framer-motion';
+
+export default function About() {
+  return (
+    <motion.div
+      className="p-6 max-w-3xl mx-auto"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+    >
+      <h2 className="text-3xl font-bold mb-4">About This Project</h2>
+      
+      <p className="mb-4 text-lg">
+        Football Standings API is a web app built for soccer fans, analysts, and enthusiasts to check live league standings from multiple leagues. 
+        It uses third-party APIs to fetch data and presents it with clean visuals, charts, and animations.
+      </p>
+
+      <div className="mb-6">
+        <h3 className="text-2xl font-semibold mb-2">Built With:</h3>
+        <ul className="list-disc list-inside text-left ml-4">
+          <li>React + Vite</li>
+          <li>Tailwind CSS</li>
+          <li>Node.js + Express (Backend)</li>
+          <li>Chart.js & Framer Motion</li>
+          <li>API-Football & Football-Data.org</li>
+          <li>Deployed via Vercel</li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 className="text-2xl font-semibold mb-2">Team Members:</h3>
+        <ul className="list-disc list-inside text-left ml-4">
+          <li>Ali Rehman – Backend & Deployment</li>
+          <li>Abdulraheem Oyewole – Frontend & UI</li>
+          {/* Add more if needed */}
+        </ul>
+      </div>
+    </motion.div>
+  );
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Arsenal",
+    "wins": 22,
+    "draws": 5,
+    "losses": 3,
+    "points": 71
+  },
+  {
+    "id": 2,
+    "name": "Manchester City",
+    "wins": 21,
+    "draws": 6,
+    "losses": 3,
+    "points": 69
+  },
+  {
+    "id": 3,
+    "name": "Liverpool",
+    "wins": 20,
+    "draws": 5,
+    "losses": 5,
+    "points": 65
+  }
+]
